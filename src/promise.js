@@ -50,13 +50,14 @@ Promise.prototype.then = function(onSuccess, onFailure) {
             me._failureCallbacks.push(handleFail);
         }
     }
+    
     return p;
 };
 
 Promise.prototype.resolve = function() {
     var me = this;
 
-    me.result = arguments;
+    me.result = arguments[0];
     
     if (me._isFailed){
         return;
@@ -70,6 +71,8 @@ Promise.prototype.resolve = function() {
 };
 
 Promise.prototype.reject = function(){
+    var me = this;
+
     me.error = arguments[0];
 
     if (me._isSuccessed){
