@@ -20,7 +20,7 @@ Promise.prototype.then = function(onSuccess, onFailure) {
                 });
             }
             else{
-                p.resolve.apply(p, (res == null || 'length' in res ? res : [res]));
+                p.resolve.apply(p, (res == null ? [] : 'length' in res ? res : [res]));
             }
         };
 
@@ -40,7 +40,7 @@ Promise.prototype.then = function(onSuccess, onFailure) {
                 });
             }
             else{
-                p.resolve.apply(p, (res == null || 'length' in res ? res : [res]));
+                p.resolve.apply(p, (res == null ? [] : 'length' in res ? res : [res]));
             }
         };
 
