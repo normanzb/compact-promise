@@ -118,10 +118,6 @@ define(function(){
         return new Promise(function(rs, rj){
             var length = promises.length;
             var count = 0;
-            if (length <= 0) {
-                rs();
-                return;
-            }
             function check() {
                 count++;
                 if (length === count) {
@@ -129,7 +125,16 @@ define(function(){
                 }
             }
             for(var l = promises.length; l--;) {
-                promises[l].then(check, rj);
+                if (!('then' in promises[l])){
+                    length--;
+                }
+                else{
+                    promises[l].then(check, rj);
+                }
+            }
+            if (length <= 0) {
+                rs();
+                return;
             }
         });
     };
