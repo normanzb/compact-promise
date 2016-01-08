@@ -1,0 +1,10 @@
+{
+  "name": "compact-promise",
+  "version": "1.0.0",
+  "main": "./Defer.min.js",
+  "description": "Very compact version of promise",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/normanzb/compact-promise"
+  }
+}
