@@ -117,7 +117,7 @@ define(function(){
     Defer.resolved = function(){
         var result = new Defer();
         result.resolve();
-        return result;
+        return result.promise;
     };
     Defer.all = function(promises) {
         return new Promise(function(rs, rj){
