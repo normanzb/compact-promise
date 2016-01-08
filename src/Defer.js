@@ -114,14 +114,21 @@ define(function(){
     };
 
     Defer.Promise = Promise;
+    Defer.resolved = function(){
+        var result = new Defer();
+        result.resolve();
+        return result;
+    };
     Defer.all = function(promises) {
         return new Promise(function(rs, rj){
             var length = promises.length;
             var count = 0;
-            function check() {
+            var results = [];
+            function check(result) {
+                results.push(result);
                 count++;
                 if (length === count) {
-                    rs();
+                    rs(results);
                 }
             }
             for(var l = promises.length; l--;) {
