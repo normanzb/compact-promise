@@ -89,21 +89,26 @@ var Defer = function () {
     Promise[PROTOTYPE].then = function (onSuccess, onFailure) {
         var defer = new Defer();
         var me = this;
+        var handleSuccess, handleFail;
         if (typeof onSuccess == FUNCTION) {
-            var handleSuccess = createResultHandlerWrapper.call(me, onSuccess, defer);
-            if (me[RESOLVED]) {
-                handleSuccess.call(null, me.result);
-            } else {
-                me._s.push(handleSuccess);
-            }
+            handleSuccess = createResultHandlerWrapper.call(me, onSuccess, defer);
+        } else {
+            handleSuccess = defer.resolve;
+        }
+        if (me[RESOLVED]) {
+            handleSuccess.call(null, me.result);
+        } else {
+            me._s.push(handleSuccess);
         }
         if (typeof onFailure == FUNCTION) {
-            var handleFail = createResultHandlerWrapper.call(me, onFailure, defer);
-            if (me[REJECTED]) {
-                handleFail.call(null, me.error);
-            } else {
-                me._f.push(handleFail);
-            }
+            handleFail = createResultHandlerWrapper.call(me, onFailure, defer);
+        } else {
+            handleFail = defer.reject;
+        }
+        if (me[REJECTED]) {
+            handleFail.call(null, me.error);
+        } else {
+            me._f.push(handleFail);
         }
         return defer.promise;
     };
