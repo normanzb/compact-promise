@@ -71,20 +71,26 @@ var Defer = function () {
             }
         }
     }
+    function createResultHandlerWrapper(handler, defer) {
+        var me = this;
+        return function () {
+            var res = handler.apply(me, arguments);
+            if (res && typeof res.then === FUNCTION) {
+                res.then(function () {
+                    defer.resolve.apply(defer, arguments);
+                }, function () {
+                    defer.reject.apply(defer, arguments);
+                });
+            } else {
+                defer.resolve.apply(defer, res == null ? [] : [res]);
+            }
+        };
+    }
     Promise[PROTOTYPE].then = function (onSuccess, onFailure) {
         var defer = new Defer();
         var me = this;
         if (typeof onSuccess == FUNCTION) {
-            var handleSuccess = function () {
-                var res = onSuccess.apply(me, arguments);
-                if (res && typeof res.then === FUNCTION) {
-                    res.then(function () {
-                        defer.resolve.apply(defer, arguments);
-                    });
-                } else {
-                    defer.resolve.apply(defer, res == null ? [] : [res]);
-                }
-            };
+            var handleSuccess = createResultHandlerWrapper.call(me, onSuccess, defer);
             if (me[RESOLVED]) {
                 handleSuccess.call(null, me.result);
             } else {
@@ -92,16 +98,7 @@ var Defer = function () {
             }
         }
         if (typeof onFailure == FUNCTION) {
-            var handleFail = function () {
-                var res = onFailure.apply(me, arguments);
-                if (res && typeof res.then === FUNCTION) {
-                    res.then(function () {
-                        defer.resolve.apply(defer, arguments);
-                    });
-                } else {
-                    defer.resolve.apply(defer, res == null ? [] : [res]);
-                }
-            };
+            var handleFail = createResultHandlerWrapper.call(me, onFailure, defer);
             if (me[REJECTED]) {
                 handleFail.call(null, me.error);
             } else {
