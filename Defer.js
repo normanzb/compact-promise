@@ -113,9 +113,14 @@ var Defer = function () {
         return defer.promise;
     };
     Defer.Promise = Promise;
-    Defer.resolve = function () {
+    Defer.resolve = function (v) {
         var result = new Defer();
-        result.resolve();
+        result.resolve(v);
+        return result.promise;
+    };
+    Defer.reject = function (v) {
+        var result = new Defer();
+        result.reject(v);
         return result.promise;
     };
     Defer.all = function (promises) {
