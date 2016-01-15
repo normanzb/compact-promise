@@ -23,7 +23,7 @@ var Defer = function () {
     function resolve() {
         var me = this;
         me.promise.result = arguments[0];
-        if (me.promise[REJECTED]) {
+        if (me.promise[RESOLVED] || me.promise[REJECTED]) {
             return;
         }
         me.promise[RESOLVED] = true;
@@ -35,7 +35,7 @@ var Defer = function () {
     function reject() {
         var me = this;
         me.promise.error = arguments[0];
-        if (me.promise[RESOLVED]) {
+        if (me.promise[RESOLVED] || me.promise[REJECTED]) {
             return;
         }
         me.promise[REJECTED] = true;

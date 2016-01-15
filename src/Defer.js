@@ -11,7 +11,7 @@ define(function(){
 
         me.promise.result = arguments[0];
         
-        if (me.promise[REJECTED]){
+        if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
         }
 
@@ -27,7 +27,7 @@ define(function(){
 
         me.promise.error = arguments[0];
 
-        if (me.promise[RESOLVED]){
+        if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
         }
 
