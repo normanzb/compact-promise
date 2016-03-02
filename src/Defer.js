@@ -130,27 +130,29 @@ define(function(){
         result.reject(v);
         return result.promise;
     };
-    Defer.all = function(promises) {
-        return new Promise(function(rs, rj){
-            var length = promises.length;
-            var count = 0;
+    function getResultChecker(results, index, resolve, length, count) {
+        return function check(result) {
+            results[index] = result;
+            count.value++;
+            if (length.value === count.value) {
+                resolve(results);
+            }
+        };
+    }
+    Defer.all = function (promises) {
+        return new Promise(function (rs, rj) {
+            var length = {value: promises.length};
+            var count = {value: 0};
             var results = [];
-            function check(result) {
-                results.push(result);
-                count++;
-                if (length === count) {
-                    rs(results);
+            for (var l = promises.length; l--;) {
+                if (!('then' in promises[l])) {
+                    results[l] = promises[l];
+                    length.value--;
+                } else {
+                    promises[l].then(getResultChecker(results, l, rs, length, count), rj);
                 }
             }
-            for(var l = promises.length; l--;) {
-                if (!('then' in promises[l])){
-                    length--;
-                }
-                else{
-                    promises[l].then(check, rj);
-                }
-            }
-            if (length <= 0) {
+            if (length.value <= 0 || length.value === count.value) {
                 rs();
                 return;
             }
