@@ -150,7 +150,7 @@ define(function(){
                 }
             }
             if (length.value <= 0 || length.value === count.value) {
-                rs();
+                rs([]);
                 return;
             }
         });
