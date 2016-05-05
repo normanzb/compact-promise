@@ -19,7 +19,7 @@ var Defer = function () {
     var PROTOTYPE = 'prototype', FUNCTION = 'function', RESOLVED = 'resolved', REJECTED = 'rejected';
     function resolve() {
         var me = this;
-        me.promise.result = arguments[0];
+        me.promise.result = me.promise.result || arguments[0];
         if (me.promise[RESOLVED] || me.promise[REJECTED]) {
             return;
         }
@@ -31,7 +31,7 @@ var Defer = function () {
     }
     function reject() {
         var me = this;
-        me.promise.error = arguments[0];
+        me.promise.error = me.promise.error || arguments[0];
         if (me.promise[RESOLVED] || me.promise[REJECTED]) {
             return;
         }
