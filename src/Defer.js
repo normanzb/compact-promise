@@ -1,6 +1,3 @@
-/*
- * A compact version of Promise
- */
 define(function(){
     'use strict';
 
