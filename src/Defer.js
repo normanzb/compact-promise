@@ -6,7 +6,7 @@ define(function(){
     function resolve() {
         var me = this;
 
-        me.promise.result = arguments[0];
+        me.promise.result = me.promise.result || arguments[0];
         
         if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
@@ -22,7 +22,7 @@ define(function(){
     function reject(){
         var me = this;
 
-        me.promise.error = arguments[0];
+        me.promise.error = me.promise.error || arguments[0];
 
         if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
@@ -150,7 +150,7 @@ define(function(){
                 }
             }
             if (length.value <= 0 || length.value === count.value) {
-                rs([]);
+                rs(results);
                 return;
             }
         });
