@@ -14,9 +14,6 @@
   }
 }(this, function () {
 
-/*
- * A compact version of Promise
- */
 var Defer = function () {
     'use strict';
     var PROTOTYPE = 'prototype', FUNCTION = 'function', RESOLVED = 'resolved', REJECTED = 'rejected';
