@@ -142,7 +142,7 @@ define(function(){
             var count = {value: 0};
             var results = [];
             for (var l = promises.length; l--;) {
-                if (!('then' in promises[l])) {
+                if (!(promises[l] && 'then' in promises[l])) {
                     results[l] = promises[l];
                     length.value--;
                 } else {
