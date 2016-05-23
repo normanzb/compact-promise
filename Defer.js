@@ -47,11 +47,11 @@ var Defer = function () {
         }
         var me = this;
         me.promise = promise && 'then' in promise ? promise : new Promise(me);
-        me.resolve = function () {
-            return resolve.apply(me, arguments);
+        me.resolve = function (value) {
+            promiseAwareCall(resolve, reject, me, value);
         };
-        me.reject = function () {
-            return reject.apply(me, arguments);
+        me.reject = function (value) {
+            promiseAwareCall(resolve, reject, me, value);
         };
     }
     function Promise(arg) {
@@ -72,16 +72,19 @@ var Defer = function () {
         var me = this;
         return function () {
             var res = handler.apply(me, arguments);
-            if (res && typeof res.then === FUNCTION) {
-                res.then(function () {
-                    defer.resolve.apply(defer, arguments);
-                }, function () {
-                    defer.reject.apply(defer, arguments);
-                });
-            } else {
-                defer.resolve.apply(defer, res == null ? [] : [res]);
-            }
+            promiseAwareCall(defer.resolve, defer.reject, defer, res);
         };
+    }
+    function promiseAwareCall(resolve, reject, context, result) {
+        if (result && typeof result.then === FUNCTION) {
+            result.then(function () {
+                resolve.apply(context, arguments);
+            }, function () {
+                reject.apply(context, arguments);
+            });
+        } else {
+            resolve.apply(context, result == null ? [] : [result]);
+        }
     }
     Promise[PROTOTYPE].then = function (onSuccess, onFailure) {
         var defer = new Defer();
