@@ -55,6 +55,9 @@ var Defer = function () {
         };
     }
     function Promise(arg) {
+        if (!(this instanceof Promise)) {
+            return new Promise(arg);
+        }
         this._s = [];
         this._f = [];
         this._defer = arg && arg instanceof Defer ? arg : new Defer(this);
