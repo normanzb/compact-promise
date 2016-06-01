@@ -149,7 +149,7 @@ define(function(){
             var count = {value: 0};
             var results = [];
             for (var l = promises.length; l--;) {
-                if (!(promises[l] && 'then' in promises[l])) {
+                if (!(promises[l] && typeof promises[l].then === 'function')) {
                     results[l] = promises[l];
                     length.value--;
                 } else {
