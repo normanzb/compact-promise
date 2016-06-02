@@ -1,0 +1,17 @@
+{
+    "validthis": true,
+    "eqnull": true,
+    "strict": true,
+    "quotmark": true,
+    "undef": true,
+    "unused": true,
+    "globals": {
+        "define": true,
+        "require": true,
+        "window": true,
+        "describe": true,
+        "it": true,
+        "expect": true,
+        "assert": true
+    }
+}

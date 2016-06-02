@@ -2,37 +2,84 @@ define(function(){
     'use strict';
 
     var PROTOTYPE = 'prototype', FUNCTION = 'function', RESOLVED = 'resolved', REJECTED = 'rejected';
+    var Func = Function, g = (new Func('return this'))();
+    var tickPending = false, tickQueue = [];
+
+    function isFunc(obj) {
+        return typeof obj === FUNCTION;
+    }
+
+    function tick(func) {
+        tickQueue.push(func);
+
+        if (!tickPending) {
+            tickPending = true;
+            ((g.process && g.process.nextTick) || g.setImmediate || g.setTimeout)(function(){
+                var q = tickQueue;
+                tickQueue = [];
+                tickPending = false;
+                for(var i = 0; i < q.length; i++) {
+                    q[i]();
+                }
+                q.length = 0;
+            });
+        }
+    }
+
+    function safeRun(func, value, defer) {
+        var ret;
+        try{
+            ret = func.call(undefined, value);
+        }
+        catch(ex){
+            if (isFunc(Defer.onError)){
+                Defer.onError(ex);
+            }
+            defer.reject(ex);
+        }
+        return ret;
+    }
+
+    function reset() {
+        this.promise._s = [];
+        this.promise._f = [];
+        this.promise._d = [];
+    }
 
     function resolve() {
-        var me = this;
-
-        me.promise.result = me.promise.result || arguments[0];
-        
+        var me = this;        
         if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
         }
 
+        me.promise.result = me.promise.result || arguments[0];
         me.promise[RESOLVED] = true;
-        for (var i = 0; i < me.promise._s.length; i++) {
-            me.promise._s[i].call(null, me.promise.result);
-        }
-        me.promise._s = [];
+
+        tick(function(){
+            for (var i = 0; i < me.promise._s.length; i++) {
+                safeRun(me.promise._s[i], me.promise.result, me.promise._d[i]);
+            }
+
+            reset.call(me);
+        });
     }
 
     function reject(){
         var me = this;
-
-        me.promise.error = me.promise.error || arguments[0];
-
         if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
         }
 
+        me.promise.error = me.promise.error || arguments[0];
         me.promise[REJECTED] = true;
-        for (var i = 0; i < me.promise._f.length; i++) {
-            me.promise._f[i].call(null, me.promise.error);
-        }
-        me.promise._f = [];
+
+        tick(function(){
+            for (var i = 0; i < me.promise._f.length; i++) {
+                safeRun(me.promise._f[i], me.promise.error, me.promise._d[i]);
+            }
+
+            reset.call(me);
+        });
     }
 
     function Defer(promise) {
@@ -40,7 +87,7 @@ define(function(){
             return new Defer(promise);
         }
         var me = this;
-        me.promise = (promise && 'then' in promise)?promise:new Promise(me);
+        me.promise = (promise && isFunc(promise.then))?promise:new Promise(me);
         me.resolve = function(value){
             promiseAwareCall(resolve, reject, resolve, me, value);
         };
@@ -55,10 +102,11 @@ define(function(){
         }
         this._s = [];
         this._f = [];
+        this._d = [];
         this._defer = (arg && arg instanceof Defer)?arg:new Defer(this);
         this.result = null;
         this.error = null;
-        if (typeof arg === FUNCTION) {
+        if (isFunc(arg)) {
             try{
                 arg.call(this, this._defer.resolve, this._defer.reject);
             }
@@ -69,23 +117,35 @@ define(function(){
     }
 
     function createResultHandlerWrapper(handler, defer) {
-        var me = this;
-        return function () {
-            var res = handler.apply(me, arguments);
-            promiseAwareCall(defer.resolve, defer.reject, defer.resolve, defer, res);
+        return function (value) {
+            tick(function(){
+                var res = safeRun(handler, value, defer);
+                promiseAwareCall(defer.resolve, defer.reject, defer.resolve, defer, res);
+            });
         };
     }
 
     function promiseAwareCall(resolve, reject, defaultSolution, context, result) {
-        if (result && typeof result.then === FUNCTION){
-            result.then(function(){
+        var then;
+        try{
+            then = result && result.then;
+        }
+        catch(ex){
+            reject.apply(context, [ex]);
+            return;
+        }
+        if (result === context.promise) {
+            reject.apply(context, [new TypeError(1)]);
+        }
+        else if (isFunc(then)){
+            then.call(result, function(){
                 resolve.apply(context, arguments);
             }, function(){
                 reject.apply(context, arguments);
             });
         }
         else {
-            defaultSolution.apply(context, (result == null?[]:[result]));
+            defaultSolution.apply(context, (result === undefined?[]:[result]));
         }
     }
 
@@ -93,6 +153,8 @@ define(function(){
         var defer = new Defer();
         var me = this;
         var handleSuccess, handleFail;
+
+        me._d.push(defer);
 
         if (typeof onSuccess == FUNCTION){
             handleSuccess = createResultHandlerWrapper.call(me, onSuccess, defer);
@@ -149,7 +211,7 @@ define(function(){
             var count = {value: 0};
             var results = [];
             for (var l = promises.length; l--;) {
-                if (!(promises[l] && typeof promises[l].then === 'function')) {
+                if (!(promises[l] && isFunc(promises[l].then))) {
                     results[l] = promises[l];
                     length.value--;
                 } else {

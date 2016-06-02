@@ -8,13 +8,26 @@
     "url": "https://github.com/normanzb/compact-promise"
   },
   "devDependencies": {
-    "requirejs": "~2.1.15",
+    "amdclean": "~1.5.0",
     "grunt": "~0.4.1",
     "grunt-bumpup": "~0.2.0",
     "grunt-contrib-requirejs": "~0.4.4",
     "grunt-contrib-uglify": ">= 0",
+    "grunt-karma": "~0.12.1",
     "grunt-tagrelease": "~0.2.0",
-    "amdclean": "~1.5.0",
-    "grunt-umd": "~2.2.1"
+    "grunt-umd": "~2.2.1",
+    "karma-chrome-launcher": "~0.2.1",
+    "karma-expect": "~1.1.1",
+    "karma-mocha": "~0.2.1",
+    "karma-phantomjs-launcher": "~0.2.1",
+    "karma-requirejs": "~0.2.2",
+    "mocha": "~2.3.4",
+    "phantomjs": "~1.9.19",
+    "promises-aplus-tests-phantom": "^2.1.0-revise",
+    "requirejs": "~2.1.15"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/promises-aplus-tests test/adapter",
+    "test-ext": "./node_modules/karma/bin/karma start karma.conf.js"
   }
 }

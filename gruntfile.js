@@ -1,5 +1,6 @@
 /*global module:false*/
 module.exports = function(grunt) {
+    'use strict';
 
     var SPACE_NAME = 'Defer';
     var EXT_JS = '.js';
@@ -8,11 +9,12 @@ module.exports = function(grunt) {
     var FILE_NAME_OUT_MIN = SPACE_NAME + EXT_JS_MIN;
     var FILE_NAME_ENTRY = SPACE_NAME;
 
-    grunt.loadNpmTasks("grunt-contrib-requirejs");
-    grunt.loadNpmTasks("grunt-contrib-uglify");
-    grunt.loadNpmTasks("grunt-bumpup");
-    grunt.loadNpmTasks("grunt-tagrelease");
-    grunt.loadNpmTasks("grunt-umd");
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-bumpup');
+    grunt.loadNpmTasks('grunt-tagrelease');
+    grunt.loadNpmTasks('grunt-umd');
+    grunt.loadNpmTasks('grunt-karma');
 
     grunt.config.init({
         requirejs : {
@@ -63,16 +65,27 @@ module.exports = function(grunt) {
             message: 'Release %version%',
             prefix:  '',
             annotate: false
+        },
+        karma: {
+          unit: {
+            configFile: 'karma.conf.js',
+            singleRun: true,
+            browsers: ['PhantomJS'],
+            phantomjsLauncher: {
+              // Have phantomjs exit if a ResourceError is encountered (useful if karma exits without killing phantom)
+              exitOnResourceError: true
+            }
+          }
         }
     });
 
-    grunt.registerTask("dist", "requirejs:dist umd:dist uglify".split(' '));
-    grunt.registerTask("default", "dist".split(' '));
-    grunt.registerTask("release", function (type) {
+    grunt.registerTask('dist', 'requirejs:dist umd:dist uglify'.split(' '));
+    grunt.registerTask('default', 'dist'.split(' '));
+    grunt.registerTask('release', function (type) {
 
         grunt.task.run('dist');
         
-        if (type != null && type != false){
+        if (type != null && type !== '' && type !== false){
             grunt.task.run('bumpup:' + type);
             grunt.task.run('tagrelease');
         }
