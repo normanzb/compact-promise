@@ -138,11 +138,19 @@ define(function(){
             reject.apply(context, [new TypeError(1)]);
         }
         else if (isFunc(then)){
-            then.call(result, function(){
-                resolve.apply(context, arguments);
-            }, function(){
-                reject.apply(context, arguments);
-            });
+            try{
+                then.call(result, function(){
+                    resolve.apply(context, arguments);
+                }, function(){
+                    reject.apply(context, arguments);
+                });
+            }
+            catch(ex) {
+                if (isFunc(Defer.onError)){
+                    Defer.onError(ex);
+                }
+                reject.call(context, ex);
+            }
         }
         else {
             defaultSolution.apply(context, (result === undefined?[]:[result]));
@@ -156,7 +164,7 @@ define(function(){
 
         me._d.push(defer);
 
-        if (typeof onSuccess == FUNCTION){
+        if (isFunc(onSuccess)){
             handleSuccess = createResultHandlerWrapper.call(me, onSuccess, defer);
         }
         else{
@@ -169,7 +177,7 @@ define(function(){
             me._s.push(handleSuccess);
         }
 
-        if (typeof onFailure == FUNCTION){
+        if (isFunc(onFailure)){
             handleFail = createResultHandlerWrapper.call(me, onFailure, defer);
         }
         else {
