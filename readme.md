@@ -27,6 +27,10 @@ Here is list of compliancy of each compilations:
 * noext - No extension method such as Defer.all(), these methods are not part of the standard, they are added because they are very common in the other similiar libs.
 * noumd - No UMD header, plain Javascript!
 
+#Bower
+
+`bower install compact-promise --save`
+
 #Tests
 
 To run full tests
