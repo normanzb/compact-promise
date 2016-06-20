@@ -12,6 +12,7 @@
         "describe": true,
         "it": true,
         "expect": true,
-        "assert": true
+        "assert": true,
+        "module": true
     }
 }

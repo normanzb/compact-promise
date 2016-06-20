@@ -29,15 +29,20 @@ module.exports = function(grunt) {
                     },
                     skipModuleInsertion: true,
                     onBuildWrite: function(name, path, contents) {
-                      return require('amdclean').clean({
-                        code: contents.replace(/\/\/>>excludeStart[^]*?\/\/>>excludeEnd\("release"\);/gm, ''),
-                        prefixMode: 'camelCase',
-                        escodegen: {
-                          format: {
-                            indent: { style: '    ' }
-                          }
-                        }
-                      });
+                        return require('amdclean').clean({
+                            code: '\'use strict\';\n' + (
+                                contents
+                                .replace(/\/\/>>excludeStart[^]*?\/\/>>excludeEnd\("release"\);/gm, '')
+                                .replace(/'use strict';/gm, '')
+                                ),
+                            prefixMode: 'camelCase',
+                            escodegen: {
+                              format: {
+                                indent: { style: '    ' }
+                              }
+                            },
+                            removeUseStricts: false
+                        });
                     }
                 }
             }

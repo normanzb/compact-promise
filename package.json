@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "amdclean": "~1.5.0",
+    "amdefine": "^1.0.0",
     "grunt": "~0.4.1",
     "grunt-bumpup": "~0.2.0",
     "grunt-contrib-requirejs": "~0.4.4",
@@ -27,7 +28,8 @@
     "requirejs": "~2.1.15"
   },
   "scripts": {
-    "test": "./node_modules/.bin/promises-aplus-tests test/adapter",
-    "test-ext": "./node_modules/karma/bin/karma start karma.conf.js"
+    "test": "npm run test-basic && npm run test-ext",
+    "test-basic": "./node_modules/.bin/promises-aplus-tests test/adapter",
+    "test-ext": "./node_modules/karma/bin/karma start karma.conf.js --browsers PhantomJS --single-run"
   }
 }

@@ -9,12 +9,11 @@ requirejs.config({
 });
 
 var assert = require('assert');
-if (typeof define !== 'function') {
-    g.define = function(factory){
-        Defer = factory();
-    };
+var sinon = require('sinon');
+if (typeof g.define !== 'function') {
+    g.define = requirejs.define;
 }
-require('../src/Defer.js');
+Defer = requirejs('../src/Defer.js');
 console.log(Defer);
 var defer = Defer;
 var resolve = Defer.resolve;
