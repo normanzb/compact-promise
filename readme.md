@@ -1,6 +1,8 @@
 #Compact implementation of Promise/A+
 
-With a sub set API of [RSVP.js](https://github.com/tildeio/rsvp.js/)/[when.js](https://github.com/cujojs/when) and very small footprint... (959 bytes after minified and gzipped)
+Promise/A+ compliant and very small footprint `Promise` implementation (1044 bytes for smallest compilation after minified and gzipped), with a sub set extension API from [RSVP.js](https://github.com/tildeio/rsvp.js/)/[when.js](https://github.com/cujojs/when).
+
+
 
 #API
 
@@ -12,19 +14,29 @@ With a sub set API of [RSVP.js](https://github.com/tildeio/rsvp.js/)/[when.js](h
 * `Defer.Promise(func)` - constructor of a promise, `func` will be called once instantiation is done with 2 functions as its parameters -- `resolve` and `reject`. Call each function respectly to resolve or reject the promise.
     * `Defer.Promise.prototype.then(resolveCallback, rejectCallback)` - Invoke `resolveCallback` when the promise is resolved, the vice versa for `rejectCallback`.
 
-#Sub set of Promise/A+ Compliant
+#Compilaton and Promise/A+ Compliant
 
-Compliant with a sub set of Promise/A+ and passed following tests:
+Compact Promise is fully compliant with Promise/A+ if full version is used. However lots of developers may find that its unnecessary to bring in all the features, as most of them probably never used in some projects.
 
-2.1, 2.2, 2.3.1, 2.3.2
-It fails on 2.3.3 and 2.3.4
+To reduce the extra fat, Compact Promise is compiled with different function sets so that you will always squeeze in the bits you really need! 
 
-TODO: try to make implementation of setImmediate and its polyfill optional to save some bytes.
+Here is list of compliancy of each compilations:
+
+* Default - fully compliant, with extension method such as Defer.all()
+* notick - Promise/A+ 3.1 is excluded to avoid platform specific `nextTick` implementation. In a lot of places, avoid `nextTick` will actually make debugging a lot of easier.
+* noext - No extension method such as Defer.all(), these methods are not part of the standard, they are added because they are very common in the other similiar libs.
+* noumd - No UMD header, plain Javascript!
 
 #Tests
 
+To run full tests
+
+`npm run test`
+
 To run Promise/A+ tests
-`npm test`
+
+`npm run test-basic`
 
 To run extended tests
+
 `npm run test-ext`

@@ -10,6 +10,7 @@
   "devDependencies": {
     "amdclean": "~1.5.0",
     "amdefine": "^1.0.0",
+    "extend": "^3.0.0",
     "grunt": "~0.4.1",
     "grunt-bumpup": "~0.2.0",
     "grunt-contrib-requirejs": "~0.4.4",
