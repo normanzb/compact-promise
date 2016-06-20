@@ -9,6 +9,10 @@
         "define": true,
         "require": true,
         "window": true,
+        "describe": true,
+        "it": true,
+        "expect": true,
+        "assert": true,
         "module": true
     }
 }
