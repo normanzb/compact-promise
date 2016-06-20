@@ -149,10 +149,11 @@ module.exports = function(grunt) {
     grunt.registerTask('extnotick', 'requirejs:extnotick umd:extnotick uglify:extnotick'.split(' '));
     grunt.registerTask('noextnotick', 'requirejs:noextnotick umd:noextnotick uglify:noextnotick'.split(' '));
     grunt.registerTask('noextnoticknoumd', 'requirejs:noextnoticknoumd uglify:noextnoticknoumd'.split(' '));
-    grunt.registerTask('default', 'dist extnotick noextnotick noextnoticknoumd'.split(' '));
+    grunt.registerTask('all', 'dist extnotick noextnotick noextnoticknoumd'.split(' '));
+    grunt.registerTask('default', 'all'.split(' '));
     grunt.registerTask('release', function (type) {
 
-        grunt.task.run('dist');
+        grunt.task.run('all');
         
         if (type != null && type !== '' && type !== false){
             grunt.task.run('bumpup:' + type);
