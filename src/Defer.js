@@ -46,40 +46,47 @@ define(function(){
         this.promise._d = [];
     }
 
-    function resolve() {
-        var me = this;        
+    function resolve(result) {
+        var me = this;
+        function callback(finalResult) {
+            me.promise.result = finalResult;
+            tick(function(){
+                for (var i = 0; i < me.promise._s.length; i++) {
+                    safeRun(me.promise._s[i], me.promise.result, me.promise._d[i]);
+                }
+
+                reset.call(me);
+            });
+        }
         if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
         }
 
-        me.promise.result = me.promise.result || arguments[0];
         me.promise[RESOLVED] = true;
-
-        tick(function(){
-            for (var i = 0; i < me.promise._s.length; i++) {
-                safeRun(me.promise._s[i], me.promise.result, me.promise._d[i]);
-            }
-
-            reset.call(me);
-        });
+        promiseAwareCall(callback, function(error){
+            me.promise[RESOLVED] = false;
+            reject.call(me, error);
+        }, callback, me, result);
     }
 
-    function reject(){
+    function reject(error){
         var me = this;
+        function callback(finalError) {
+            me.promise.error = finalError;
+            tick(function(){
+                for (var i = 0; i < me.promise._f.length; i++) {
+                    safeRun(me.promise._f[i], me.promise.error, me.promise._d[i]);
+                }
+
+                reset.call(me);
+            });
+        }
         if (me.promise[RESOLVED] || me.promise[REJECTED]){
             return;
         }
 
-        me.promise.error = me.promise.error || arguments[0];
         me.promise[REJECTED] = true;
-
-        tick(function(){
-            for (var i = 0; i < me.promise._f.length; i++) {
-                safeRun(me.promise._f[i], me.promise.error, me.promise._d[i]);
-            }
-
-            reset.call(me);
-        });
+        promiseAwareCall(callback, callback, callback, me, error);
     }
 
     function Defer(promise) {
@@ -104,6 +111,8 @@ define(function(){
         this._f = [];
         this._d = [];
         this._defer = (arg && arg instanceof Defer)?arg:new Defer(this);
+        this.resolved = false;
+        this.rejected = false;
         this.result = null;
         this.error = null;
         if (isFunc(arg)) {
@@ -139,10 +148,18 @@ define(function(){
         }
         else if (isFunc(then)){
             try{
-                then.call(result, function(){
-                    resolve.apply(context, arguments);
-                }, function(){
-                    reject.apply(context, arguments);
+                then.call(result, function resolveHandler(newResult){
+                    if (resolveHandler.handled) {
+                        return;
+                    }
+                    resolveHandler.handled = true;
+                    resolve.call(context, newResult);
+                }, function rejectHandler(newError){
+                    if (rejectHandler.handled) {
+                        return;
+                    }
+                    rejectHandler.handled = true;
+                    reject.call(context, newError);
                 });
             }
             catch(ex) {

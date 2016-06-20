@@ -8,6 +8,7 @@ With a sub set API of [RSVP.js](https://github.com/tildeio/rsvp.js/)/[when.js](h
     * `Defer.prototype.resolve(value)` - Resolve the defer with `value`.
     * `Defer.prototype.reject(error)` - Reject the defer with `error`.
 * `Defer.all(promises)` - Resolve when the all the promises in the `promises` array are resolved, reject when any of the `promises` is rejected.
+* `Defer.onError` - Overwrite this property with a function so that the function gets called whenever an error or exception is detected.
 * `Defer.Promise(func)` - constructor of a promise, `func` will be called once instantiation is done with 2 functions as its parameters -- `resolve` and `reject`. Call each function respectly to resolve or reject the promise.
     * `Defer.Promise.prototype.then(resolveCallback, rejectCallback)` - Invoke `resolveCallback` when the promise is resolved, the vice versa for `rejectCallback`.
 
