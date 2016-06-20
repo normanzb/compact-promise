@@ -1,6 +1,6 @@
 #Compact implementation of Promise/A+
 
-Promise/A+ compliant and very small footprint `Promise` implementation (1044 bytes for smallest compilation after minified and gzipped), with a sub set extension API from [RSVP.js](https://github.com/tildeio/rsvp.js/)/[when.js](https://github.com/cujojs/when).
+Promise/A+ compliant and very small footprint `Promise` implementation (870 bytes for smallest compilation after minified and gzipped), with a sub set extension API from [RSVP.js](https://github.com/tildeio/rsvp.js/)/[when.js](https://github.com/cujojs/when).
 
 
 
