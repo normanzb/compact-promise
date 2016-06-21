@@ -65,9 +65,7 @@ var Defer = function (allExt, util, tick) {
         try {
             ret = func.call(undefined, value);
         } catch (ex) {
-            if (util.f(Defer.onError)) {
-                Defer.onError(ex);
-            }
+            handleError(ex);
             defer.reject(ex);
         }
         return ret;
@@ -76,6 +74,11 @@ var Defer = function (allExt, util, tick) {
         this.promise._s = [];
         this.promise._f = [];
         this.promise._d = [];
+    }
+    function handleError(err) {
+        if (util.f(Defer.onError)) {
+            Defer.onError(err);
+        }
     }
     function resolve(result) {
         var me = this;
@@ -129,6 +132,52 @@ var Defer = function (allExt, util, tick) {
         promise[PENDING] = true;
         recursiveCall(error);
     }
+    function createResultHandlerWrapper(handler, defer) {
+        return function (value) {
+            tick(function () {
+                var res = safeRun(handler, value, defer);
+                promiseAwareCall(defer.resolve, defer.reject, defer.resolve, defer, res);
+            });
+        };
+    }
+    function promiseAwareCall(resolve, reject, defaultSolution, context, result) {
+        var then, handled;
+        try {
+            then = (typeof result === 'object' || util.f(result)) && result && result.then;
+        } catch (ex) {
+            handleError(ex);
+            reject.apply(context, [ex]);
+            return;
+        }
+        if (result === context.promise) {
+            reject.apply(context, [new TypeError(1)]);
+        } else if (util.f(then)) {
+            try {
+                then.call(result, function (newResult) {
+                    if (handled) {
+                        return;
+                    }
+                    handled = true;
+                    resolve.call(context, newResult);
+                }, function (newError) {
+                    if (handled) {
+                        return;
+                    }
+                    handled = true;
+                    reject.call(context, newError);
+                });
+            } catch (ex) {
+                if (handled) {
+                    return;
+                }
+                handled = true;
+                handleError(ex);
+                reject.call(context, ex);
+            }
+        } else {
+            defaultSolution.apply(context, result === undefined ? [] : [result]);
+        }
+    }
     function Defer(promise) {
         if (!(this instanceof Defer)) {
             return new Defer(promise);
@@ -159,55 +208,9 @@ var Defer = function (allExt, util, tick) {
             try {
                 arg.call(this, this._defer.resolve, this._defer.reject);
             } catch (ex) {
+                handleError(ex);
                 this._defer.reject(ex);
             }
-        }
-    }
-    function createResultHandlerWrapper(handler, defer) {
-        return function (value) {
-            tick(function () {
-                var res = safeRun(handler, value, defer);
-                promiseAwareCall(defer.resolve, defer.reject, defer.resolve, defer, res);
-            });
-        };
-    }
-    function promiseAwareCall(resolve, reject, defaultSolution, context, result) {
-        var then, handled;
-        try {
-            then = (typeof result === 'object' || util.f(result)) && result && result.then;
-        } catch (ex) {
-            reject.apply(context, [ex]);
-            return;
-        }
-        if (result === context.promise) {
-            reject.apply(context, [new TypeError(1)]);
-        } else if (util.f(then)) {
-            try {
-                then.call(result, function (newResult) {
-                    if (handled) {
-                        return;
-                    }
-                    handled = true;
-                    resolve.call(context, newResult);
-                }, function (newError) {
-                    if (handled) {
-                        return;
-                    }
-                    handled = true;
-                    reject.call(context, newError);
-                });
-            } catch (ex) {
-                if (handled) {
-                    return;
-                }
-                handled = true;
-                if (util.f(Defer.onError)) {
-                    Defer.onError(ex);
-                }
-                reject.call(context, ex);
-            }
-        } else {
-            defaultSolution.apply(context, result === undefined ? [] : [result]);
         }
     }
     Promise[PROTOTYPE].then = function (onSuccess, onFailure) {
