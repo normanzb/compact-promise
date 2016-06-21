@@ -1,12 +1,10 @@
 #Compact implementation of Promise/A+
 
-Promise/A+ compliant and very small footprint `Promise` implementation (870 bytes for smallest compilation after minified and gzipped), with a sub set extension API from [RSVP.js](https://github.com/tildeio/rsvp.js/)/[when.js](https://github.com/cujojs/when).
+Compact Promise is a lightweight Promise/A+ compliant implementation with very small footprint (870 bytes for smallest compilation after minified and gzipped).
 
+#References
 
-
-#API
-
-* `Defer()` - constructor of defer.
+* `Defer()` - Constructor of defer.
     * `Defer.prototype.resolve(value)` - Resolve the defer with `value`.
     * `Defer.prototype.reject(error)` - Reject the defer with `error`.
 * `Defer.all(promises)` - Resolve when the all the promises in the `promises` array are resolved, reject when any of the `promises` is rejected.
@@ -16,14 +14,14 @@ Promise/A+ compliant and very small footprint `Promise` implementation (870 byte
 
 #Compilaton and Promise/A+ Compliant
 
-Compact Promise is fully compliant with Promise/A+ if full version is used. However lots of developers may find that its unnecessary to bring in all the features, as most of them probably never used in some projects.
+The complete version of Compact Promise is fully compliant with Promise/A+. However lots of developers may find that its unnecessary to bring in all the standard and extended features into the project, as most of them probably never used.
 
-To reduce the extra fat, Compact Promise is compiled with different function sets so that you will always squeeze in the bits you really need! 
+To reduce the extra fat, Compact Promise is also compiled with/without certain function sets so that you can pick up just what you need for your next project. 
 
 Here is list of compliancy of each compilations:
 
-* Default - fully compliant, with extension method such as Defer.all()
-* notick - Promise/A+ 3.1 is excluded to avoid platform specific `nextTick` implementation. In a lot of places, avoid `nextTick` will actually make debugging a lot of easier.
+* Default - full compliant, with extension methods such as Defer.all()
+* notick - Promise/A+ 3.1 is excluded to avoid to implement platform specific micro-task `nextTick` or macro-task `setImmediate`, as a lot of developers has already pointed out, the cross platform implementation of those, at the moment is bloated with feature detections, workarounds and hacks, which means it doesn't fit the ideology of being a compact, lightweight, use anywhere library. And even so, it still doesn't support a lot of older platforms and mobile platforms and at those cases it fallbacks to `setTimeout`, which means very slow execution and performance. By not implemeting Promise/A+ 3.1, in a lot of cases, its not just make page loads faster, run faster, but also avoid unnecessary async calls so it makes debugging a lot of easier as well.
 * noext - No extension method such as Defer.all(), these methods are not part of the standard, they are added because they are very common in the other similiar libs.
 * noumd - No UMD header, plain Javascript!
 
