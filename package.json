@@ -1,6 +1,6 @@
 {
   "name": "compact-promise",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "main": "./Defer.min.js",
   "description": "Very compact version of promise",
   "repository": {
