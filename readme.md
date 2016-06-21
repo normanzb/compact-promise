@@ -1,8 +1,9 @@
+[<img align="right" alt="Promises/A+ 1.0 compliant" src="https://rawgit.com/promises-aplus/promises-spec/master/logo.svg" width="80">](http://promisesaplus.com/)
+
 #Compact implementation of Promise/A+
 
 Compact Promise is a lightweight Promise/A+ compliant implementation with very small footprint (870 bytes for smallest compilation after minified and gzipped).
 
-[<img align="right" alt="Promises/A+ 1.0 compliant" src="https://rawgit.com/promises-aplus/promises-spec/master/logo.svg">](http://promisesaplus.com/)
 
 #References
 
