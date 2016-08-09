@@ -92,17 +92,11 @@ var Defer = function (allExt, util, tick) {
                 reset[CALL](me);
             });
         }
-        function recursiveCall(recursiveError) {
-            promiseAwareCall(function (result) {
-                promise[PENDING] = false;
-                resolve[CALL](me, result);
-            }, recursiveCall, callback, me, recursiveError);
-        }
         if (promise[RESOLVED] || promise[REJECTED] || promise[PENDING]) {
             return;
         }
         promise[PENDING] = true;
-        recursiveCall(error);
+        callback(error);
     }
     function createResultHandlerWrapper(handler, defer) {
         return function (value) {
