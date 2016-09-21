@@ -14,7 +14,7 @@ Compact Promise is a lightweight Promise/A+ compliant implementation with very s
 * `Defer.Promise(func)` - constructor of a promise, `func` will be called once instantiation is done with 2 functions as its parameters -- `resolve` and `reject`. Call each function respectly to resolve or reject the promise.
     * `Defer.Promise.prototype.then(resolveCallback, rejectCallback)` - Invoke `resolveCallback` when the promise is resolved, the vice versa for `rejectCallback`.
 
-#Compilaton and Promise/A+ Compliant
+#Compilation and Promise/A+ Compliant
 
 The complete version of Compact Promise is fully compliant with Promise/A+. However lots of developers may find that its unnecessary to bring in all the standard and extended features into the project, as most of them probably never used.
 
