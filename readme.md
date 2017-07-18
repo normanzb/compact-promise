@@ -1,10 +1,10 @@
-#Compact implementation of Promise/A+
+# Compact implementation of Promise/A+
 
 [<img align="right" alt="Promises/A+ 1.0 compliant" src="https://rawgit.com/promises-aplus/promises-spec/master/logo.svg" width="50" valign="baseline">](http://promisesaplus.com/)
 
 Compact Promise is a lightweight Promise/A+ compliant implementation with very small footprint (870 bytes for smallest compilation after minified and gzipped).
 
-#References
+# References
 
 * `Defer()` - Constructor of defer.
     * `Defer.prototype.resolve(value)` - Resolve the defer with `value`.
@@ -14,7 +14,7 @@ Compact Promise is a lightweight Promise/A+ compliant implementation with very s
 * `Defer.Promise(func)` - constructor of a promise, `func` will be called once instantiation is done with 2 functions as its parameters -- `resolve` and `reject`. Call each function respectly to resolve or reject the promise.
     * `Defer.Promise.prototype.then(resolveCallback, rejectCallback)` - Invoke `resolveCallback` when the promise is resolved, the vice versa for `rejectCallback`.
 
-#Compilation and Promise/A+ Compliant
+# Compilation and Promise/A+ Compliant
 
 The complete version of Compact Promise is fully compliant with Promise/A+. However lots of developers may find that its unnecessary to bring in all the standard and extended features into the project, as most of them probably never used.
 
@@ -27,11 +27,11 @@ Here is list of compliancy of each compilations:
 * noext - No extension method such as Defer.all(), these methods are not part of the standard, they are added because they are very common in the other similiar libs.
 * noumd - No UMD header, plain Javascript!
 
-#Bower
+# Bower
 
 `bower install compact-promise --save`
 
-#Tests
+# Tests
 
 To run full tests
 
