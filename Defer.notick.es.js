@@ -1,28 +1,49 @@
-;(function() {
-var util;
+(function() {var util;
 
 util = {
     f: function (obj) {
         return typeof obj === 'function';
     }
 };
-}());
-;(function() {
 var extAll;
 
 extAll = function (util) {
-    return function () {
+    function getResultChecker(results, index, resolve, length, count) {
+        return function check(result) {
+            results[index] = result;
+            count.value++;
+            if (length.value === count.value) {
+                resolve(results);
+            }
+        };
+    }
+    return function (Defer) {
+        Defer.all = function (promises) {
+            return new Defer.Promise(function (rs, rj) {
+                var length = { value: promises.length };
+                var count = { value: 0 };
+                var results = [];
+                for (var l = promises.length; l--;) {
+                    if (!(promises[l] && util.f(promises[l].then))) {
+                        results[l] = promises[l];
+                        length.value--;
+                    } else {
+                        promises[l].then(getResultChecker(results, l, rs, length, count), rj);
+                    }
+                }
+                if (length.value <= 0 || length.value === count.value) {
+                    rs(results);
+                    return;
+                }
+            });
+        };
     };
 }(util);
-}());
-;(function() {
 var tickSmall;
 
 tickSmall = function (func) {
     func();
 };
-}());
-;(function() {
 var Defer;
 
 Defer = function (allExt, util, tick) {
@@ -223,4 +244,4 @@ Defer = function (allExt, util, tick) {
     allExt(Defer);
     return Defer;
 }(extAll, util, tickSmall);
-}());
+;export default Defer;}());

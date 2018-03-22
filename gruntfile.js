@@ -15,6 +15,7 @@ module.exports = function(grunt) {
     var FILE_NAME_OUT_MIN_NOEXTNOTICK = SPACE_NAME + '.noext.notick.min' + EXT_JS;
     var FILE_NAME_OUT_MAX_NOEXTNOTICKNOUMD = SPACE_NAME + '.noumd.noext.notick' + EXT_JS;
     var FILE_NAME_OUT_MIN_NOEXTNOTICKNOUMD = SPACE_NAME + '.noumd.noext.notick.min' + EXT_JS;
+    var FILE_NAME_OUT_MAX_NOTICK_ES = SPACE_NAME + '.notick.es' + EXT_JS;
 
     var extend = require('extend');
 
@@ -24,6 +25,14 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-tagrelease');
     grunt.loadNpmTasks('grunt-umd');
     grunt.loadNpmTasks('grunt-karma');
+
+    function removePragmas(contents) {
+        return '\'use strict\';\n' + (
+            contents
+            .replace(/\/\/>>excludeStart[^]*?\/\/>>excludeEnd\("release"\);/gm, '')
+            .replace(/'use strict';/gm, '')
+            ).trim()
+    }
 
     var requireOptions = {
         name: FILE_NAME_ENTRY,
@@ -36,18 +45,18 @@ module.exports = function(grunt) {
         skipModuleInsertion: true,
         onBuildWrite: function(name, path, contents) {
             return require('amdclean').clean({
-                code: '\'use strict\';\n' + (
-                    contents
-                    .replace(/\/\/>>excludeStart[^]*?\/\/>>excludeEnd\("release"\);/gm, '')
-                    .replace(/'use strict';/gm, '')
-                    ),
+                code: removePragmas(contents),
                 prefixMode: 'camelCase',
                 escodegen: {
                   format: {
                     indent: { style: '    ' }
                   }
                 },
-                removeUseStricts: false
+                removeUseStricts: false,
+                wrap: {
+                    start:'',
+                    end:''
+                }
             });
         }
     };
@@ -69,6 +78,14 @@ module.exports = function(grunt) {
         out: FILE_NAME_OUT_MAX_NOEXTNOTICKNOUMD
     });
 
+    var noTickEsOptions = extend({}, extNoTickOptions, {
+        out: FILE_NAME_OUT_MAX_NOTICK_ES,
+        wrap: {
+            start: "(function() {",
+            end: ";export default Defer;}());"
+        },
+    })
+
     grunt.config.init({
         requirejs: {
             dist: {
@@ -82,6 +99,9 @@ module.exports = function(grunt) {
             },
             noextnoticknoumd: {
                 options: noExtNoTickNoUMDOptions
+            },
+            extNoTickEs: {
+                options: noTickEsOptions
             }
         },
         umd: {
@@ -146,10 +166,11 @@ module.exports = function(grunt) {
     });
 
     grunt.registerTask('dist', 'requirejs:dist umd:dist uglify:dist'.split(' '));
+    grunt.registerTask('extnotick-es', 'requirejs:extNoTickEs'.split(' '));
     grunt.registerTask('extnotick', 'requirejs:extnotick umd:extnotick uglify:extnotick'.split(' '));
     grunt.registerTask('noextnotick', 'requirejs:noextnotick umd:noextnotick uglify:noextnotick'.split(' '));
     grunt.registerTask('noextnoticknoumd', 'requirejs:noextnoticknoumd uglify:noextnoticknoumd'.split(' '));
-    grunt.registerTask('all', 'dist extnotick noextnotick noextnoticknoumd'.split(' '));
+    grunt.registerTask('all', 'dist extnotick extnotick-es noextnotick noextnoticknoumd'.split(' '));
     grunt.registerTask('default', 'all'.split(' '));
     grunt.registerTask('release', function (type) {
 

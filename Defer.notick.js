@@ -14,14 +14,19 @@
   }
 }(this, function () {
 
+;(function() {
+var util;
 
-var util = {
+util = {
     f: function (obj) {
         return typeof obj === 'function';
     }
 };
+}());
+;(function() {
+var extAll;
 
-var extAll = function (util) {
+extAll = function (util) {
     function getResultChecker(results, index, resolve, length, count) {
         return function check(result) {
             results[index] = result;
@@ -53,12 +58,18 @@ var extAll = function (util) {
         };
     };
 }(util);
+}());
+;(function() {
+var tickSmall;
 
-var tickSmall = function (func) {
+tickSmall = function (func) {
     func();
 };
+}());
+;(function() {
+var Defer;
 
-var Defer = function (allExt, util, tick) {
+Defer = function (allExt, util, tick) {
     var PROTOTYPE = 'prototype', RESOLVE = 'resolve', REJECT = 'reject', RESOLVED = 'resolved', REJECTED = 'rejected', PENDING = 'pending', PROMISE = 'promise', CALL = 'call', RESULT = 'result', ERROR = 'error', undef;
     function safeRun(func, value, defer) {
         var ret;
@@ -256,6 +267,7 @@ var Defer = function (allExt, util, tick) {
     allExt(Defer);
     return Defer;
 }(extAll, util, tickSmall);
+}());
 
 return Defer;
 
