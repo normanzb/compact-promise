@@ -81,8 +81,8 @@ module.exports = function(grunt) {
     var noTickEsOptions = extend({}, extNoTickOptions, {
         out: FILE_NAME_OUT_MAX_NOTICK_ES,
         wrap: {
-            start: "(function() {",
-            end: ";export default Defer;}());"
+            start: "",
+            end: ";export default Defer;"
         },
     })
 

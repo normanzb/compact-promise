@@ -1,4 +1,4 @@
-(function() {var util;
+var util;
 
 util = {
     f: function (obj) {
@@ -244,4 +244,4 @@ Defer = function (allExt, util, tick) {
     allExt(Defer);
     return Defer;
 }(extAll, util, tickSmall);
-;export default Defer;}());
+;export default Defer;
