@@ -14,7 +14,6 @@
   }
 }(this, function () {
 
-;(function() {
 var util;
 
 util = {
@@ -22,8 +21,6 @@ util = {
         return typeof obj === 'function';
     }
 };
-}());
-;(function() {
 var extAll;
 
 extAll = function (util) {
@@ -58,8 +55,6 @@ extAll = function (util) {
         };
     };
 }(util);
-}());
-;(function() {
 var tickSmall;
 
 tickSmall = function () {
@@ -81,8 +76,6 @@ tickSmall = function () {
         }
     };
 }();
-}());
-;(function() {
 var Defer;
 
 Defer = function (allExt, util, tick) {
@@ -283,7 +276,6 @@ Defer = function (allExt, util, tick) {
     allExt(Defer);
     return Defer;
 }(extAll, util, tickSmall);
-}());
 
 return Defer;
 

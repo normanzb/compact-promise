@@ -1,4 +1,3 @@
-;(function() {
 var util;
 
 util = {
@@ -6,23 +5,17 @@ util = {
         return typeof obj === 'function';
     }
 };
-}());
-;(function() {
 var extAll;
 
 extAll = function (util) {
     return function () {
     };
 }(util);
-}());
-;(function() {
 var tickSmall;
 
 tickSmall = function (func) {
     func();
 };
-}());
-;(function() {
 var Defer;
 
 Defer = function (allExt, util, tick) {
@@ -223,4 +216,3 @@ Defer = function (allExt, util, tick) {
     allExt(Defer);
     return Defer;
 }(extAll, util, tickSmall);
-}());
