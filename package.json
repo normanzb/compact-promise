@@ -1,6 +1,6 @@
 {
   "name": "compact-promise",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "main": "./Defer.notick.commonjs.js",
   "description": "Very compact version of promise",
   "repository": {
