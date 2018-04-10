@@ -16,6 +16,7 @@ module.exports = function(grunt) {
     var FILE_NAME_OUT_MAX_NOEXTNOTICKNOUMD = SPACE_NAME + '.noumd.noext.notick' + EXT_JS;
     var FILE_NAME_OUT_MIN_NOEXTNOTICKNOUMD = SPACE_NAME + '.noumd.noext.notick.min' + EXT_JS;
     var FILE_NAME_OUT_MAX_NOTICK_ES = SPACE_NAME + '.notick.es' + EXT_JS;
+    var FILE_NAME_OUT_MAX_NOTICK_COMMONJS = SPACE_NAME + '.notick.commonjs' + EXT_JS;
 
     var extend = require('extend');
 
@@ -84,6 +85,14 @@ module.exports = function(grunt) {
             start: "",
             end: ";export default Defer;"
         },
+    });
+
+    var noTickCommonJSOptions = extend({}, extNoTickOptions, {
+        out: FILE_NAME_OUT_MAX_NOTICK_COMMONJS,
+        wrap: {
+            start: "",
+            end: ";module.exports = Defer;"
+        },
     })
 
     grunt.config.init({
@@ -102,6 +111,9 @@ module.exports = function(grunt) {
             },
             extNoTickEs: {
                 options: noTickEsOptions
+            },
+            extNoTickCommonJS: {
+                options: noTickCommonJSOptions
             }
         },
         umd: {
@@ -167,10 +179,11 @@ module.exports = function(grunt) {
 
     grunt.registerTask('dist', 'requirejs:dist umd:dist uglify:dist'.split(' '));
     grunt.registerTask('extnotick-es', 'requirejs:extNoTickEs'.split(' '));
+    grunt.registerTask('extnotick-commonjs', 'requirejs:extNoTickCommonJS'.split(' '));
     grunt.registerTask('extnotick', 'requirejs:extnotick umd:extnotick uglify:extnotick'.split(' '));
     grunt.registerTask('noextnotick', 'requirejs:noextnotick umd:noextnotick uglify:noextnotick'.split(' '));
     grunt.registerTask('noextnoticknoumd', 'requirejs:noextnoticknoumd uglify:noextnoticknoumd'.split(' '));
-    grunt.registerTask('all', 'dist extnotick extnotick-es noextnotick noextnoticknoumd'.split(' '));
+    grunt.registerTask('all', 'dist extnotick extnotick-es extnotick-commonjs noextnotick noextnoticknoumd'.split(' '));
     grunt.registerTask('default', 'all'.split(' '));
     grunt.registerTask('release', function (type) {
 
