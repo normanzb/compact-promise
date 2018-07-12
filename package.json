@@ -34,6 +34,7 @@
     "requirejs": "^2.3.5"
   },
   "scripts": {
+    "build": "grunt",
     "test": "npm run test-basic && npm run test-ext",
     "test-basic": "./node_modules/.bin/promises-aplus-tests test/adapter",
     "test-ext": "./node_modules/karma/bin/karma start karma.conf.js --browsers PhantomJS --single-run"
