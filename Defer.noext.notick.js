@@ -219,17 +219,17 @@ Defer = function (allExt, util, tick) {
         return defer[PROMISE];
     };
     Defer.Promise = Promise;
-    Defer[RESOLVE] = function (v) {
+    Promise[RESOLVE] = function (v) {
         var result = new Defer();
         result[RESOLVE](v);
         return result[PROMISE];
     };
-    Defer[REJECT] = function (v) {
+    Promise[REJECT] = function (v) {
         var result = new Defer();
         result[REJECT](v);
         return result[PROMISE];
     };
-    allExt(Defer);
+    allExt(Promise);
     return Defer;
 }(extAll, util, tickSmall);
 

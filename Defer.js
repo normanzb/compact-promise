@@ -33,9 +33,9 @@ extAll = function (util) {
             }
         };
     }
-    return function (Defer) {
-        Defer.all = function (promises) {
-            return new Defer.Promise(function (rs, rj) {
+    return function (Promise) {
+        Promise.all = function (promises) {
+            return new Promise(function (rs, rj) {
                 var length = { value: promises.length };
                 var count = { value: 0 };
                 var results = [];
@@ -263,17 +263,17 @@ Defer = function (allExt, util, tick) {
         return defer[PROMISE];
     };
     Defer.Promise = Promise;
-    Defer[RESOLVE] = function (v) {
+    Promise[RESOLVE] = function (v) {
         var result = new Defer();
         result[RESOLVE](v);
         return result[PROMISE];
     };
-    Defer[REJECT] = function (v) {
+    Promise[REJECT] = function (v) {
         var result = new Defer();
         result[REJECT](v);
         return result[PROMISE];
     };
-    allExt(Defer);
+    allExt(Promise);
     return Defer;
 }(extAll, util, tickSmall);
 
