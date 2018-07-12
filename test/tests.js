@@ -15,20 +15,20 @@ define([
 
 
     return describe('Compact Promise', function(){
-
-        describe('Defer', function(){
-            describe('Defer.all', function(){
+        var Promise = Defer.Promise;
+        describe('Promise', function(){
+            describe('Promise.all', function(){
                 it('should exist', function() {
-                    expect(Defer.all).a('function');
+                    expect(Promise.all).a('function');
                 });
 
                 it('throws when not passed an array', function(done) {
-                    var nothing = assertRejection(Defer.all());
+                    var nothing = assertRejection(Promise.all());
                     // doubt if these 2 are necessary, they are copied from rsvp
-                    // var string  = assertRejection(Defer.all(''));
-                    // var object  = assertRejection(Defer.all({}));
+                    // var string  = assertRejection(Promise.all(''));
+                    // var object  = assertRejection(Promise.all({}));
 
-                    Defer.all([
+                    Promise.all([
                         nothing
                         // string,
                         // object
@@ -38,7 +38,7 @@ define([
                 });
 
                 it('works with plan pojo input', function(done) {
-                    Defer.all([{},{a:1}]).then(function(result) {
+                    Promise.all([{},{a:1}]).then(function(result) {
                         expect(result).to.eql([{},{a:1}]);
                         done();
                     });
@@ -47,14 +47,14 @@ define([
                 it('fulfilled only after all of the other promises are fulfilled', function(done) {
                     var firstResolved, secondResolved, firstResolver, secondResolver;
 
-                    var first = new Defer.Promise(function(resolve) {
+                    var first = new Promise(function(resolve) {
                         firstResolver = resolve;
                     });
                     first.then(function(value) {
                         firstResolved = value;
                     });
 
-                    var second = new Defer.Promise(function(resolve) {
+                    var second = new Promise(function(resolve) {
                         secondResolver = resolve;
                     });
                     second.then(function(value) {
@@ -69,7 +69,7 @@ define([
                         secondResolver(true);
                     }, 0);
 
-                    Defer.all([first, second]).then(function() {
+                    Promise.all([first, second]).then(function() {
                         expect(firstResolved).to.equal(true);
                         expect(secondResolved).to.equal(true);
                         done();
@@ -80,11 +80,11 @@ define([
                     var firstResolver, secondResolver;
                     var firstWasRejected = false, secondCompleted = false;
 
-                    var first = new Defer.Promise(function(resolve, reject) {
+                    var first = new Promise(function(resolve, reject) {
                         firstResolver = { resolve: resolve, reject: reject };
                     });
 
-                    var second = new Defer.Promise(function(resolve, reject) {
+                    var second = new Promise(function(resolve, reject) {
                         secondResolver = { resolve: resolve, reject: reject };
                     });
 
@@ -100,7 +100,7 @@ define([
                         done();
                     });
 
-                    Defer.all([first, second]).then(function() {
+                    Promise.all([first, second]).then(function() {
                         expect('should not run').to.equal(false);
                     }, function() {
                         expect(firstWasRejected).to.equal(true);
@@ -119,15 +119,15 @@ define([
                 it('passes the resolved values of each promise to the callback in the correct order', function(done) {
                     var firstResolver, secondResolver, thirdResolver;
 
-                    var first = new Defer.Promise(function(resolve, reject) {
+                    var first = new Promise(function(resolve, reject) {
                     firstResolver = { resolve: resolve, reject: reject };
                     });
 
-                    var second = new Defer.Promise(function(resolve, reject) {
+                    var second = new Promise(function(resolve, reject) {
                     secondResolver = { resolve: resolve, reject: reject };
                     });
 
-                    var third = new Defer.Promise(function(resolve, reject) {
+                    var third = new Promise(function(resolve, reject) {
                     thirdResolver = { resolve: resolve, reject: reject };
                     });
 
@@ -135,7 +135,7 @@ define([
                     firstResolver.resolve(1);
                     secondResolver.resolve(2);
 
-                    Defer.all([first, second, third]).then(function(results) {
+                    Promise.all([first, second, third]).then(function(results) {
                         expect(results.length).to.equal(3);
                         expect(results[0]).to.equal(1);
                         expect(results[1]).to.equal(2);
@@ -145,21 +145,21 @@ define([
                 });
 
                 it('resolves an empty array passed to all()', function(done) {
-                    Defer.all([]).then(function(results) {
+                    Promise.all([]).then(function(results) {
                         expect(results.length).to.equal(0);
                         done();
                     });
                 });
 
                 it('works with null', function(done) {
-                    Defer.all([null]).then(function(results) {
+                    Promise.all([null]).then(function(results) {
                         expect(results[0]).to.equal(null);
                         done();
                     });
                 });
 
                 it('works with a mix of promises and thenables and non-promises', function(done) {
-                    var promise = new Defer.Promise(function(resolve) { 
+                    var promise = new Promise(function(resolve) { 
                         resolve(1); 
                     });
                     var syncThenable = { 
@@ -174,7 +174,7 @@ define([
                     };
                     var nonPromise = 4;
 
-                    Defer
+                    Promise
                     .all([promise, syncThenable, asyncThenable, nonPromise])
                     .then(function(results) {
                         expect(results).to.be.eql([1, 2, 3, 4]);

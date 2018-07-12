@@ -17,9 +17,9 @@ define(['../util'], function(util){
         };
     }
 
-    return function(Defer){
-        Defer.all = function (promises) {
-            return new Defer.Promise(function (rs, rj) {
+    return function(Promise){
+        Promise.all = function (promises) {
+            return new Promise(function (rs, rj) {
                 var length = {value: promises.length};
                 var count = {value: 0};
                 var results = [];

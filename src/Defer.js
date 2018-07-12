@@ -228,17 +228,17 @@ define(['./ext/all', './util', './tick/small'], function(allExt, util, tick){
     };
 
     Defer.Promise = Promise;
-    Defer[RESOLVE] = function(v){
+    Promise[RESOLVE] = function(v){
         var result = new Defer();
         result[RESOLVE](v);
         return result[PROMISE];
     };
-    Defer[REJECT] = function(v){
+    Promise[REJECT] = function(v){
         var result = new Defer();
         result[REJECT](v);
         return result[PROMISE];
     };
     
-    allExt(Defer);
+    allExt(Promise);
     return Defer;
 });
