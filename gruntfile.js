@@ -2,21 +2,22 @@
 module.exports = function(grunt) {
     'use strict';
 
-    var SPACE_NAME = 'Defer';
+    var DIST = 'dist';
+    var SPACE_NAME = 'Promise';
     var EXT_JS = '.js';
     var EXT_JS_MIN = '.min' + EXT_JS;
     var FILE_NAME_OUT_MAX = SPACE_NAME + EXT_JS;
     var FILE_NAME_OUT_MIN = SPACE_NAME + EXT_JS_MIN;
     var FILE_NAME_ENTRY = SPACE_NAME;
 
-    var FILE_NAME_OUT_MAX_NOTICK = SPACE_NAME + '.notick' + EXT_JS;
-    var FILE_NAME_OUT_MIN_NOTICK = SPACE_NAME + '.notick.min' + EXT_JS;
-    var FILE_NAME_OUT_MAX_NOEXTNOTICK = SPACE_NAME + '.noext.notick' + EXT_JS;
-    var FILE_NAME_OUT_MIN_NOEXTNOTICK = SPACE_NAME + '.noext.notick.min' + EXT_JS;
-    var FILE_NAME_OUT_MAX_NOEXTNOTICKNOUMD = SPACE_NAME + '.noumd.noext.notick' + EXT_JS;
-    var FILE_NAME_OUT_MIN_NOEXTNOTICKNOUMD = SPACE_NAME + '.noumd.noext.notick.min' + EXT_JS;
-    var FILE_NAME_OUT_MAX_NOTICK_ES = SPACE_NAME + '.notick.es' + EXT_JS;
-    var FILE_NAME_OUT_MAX_NOTICK_COMMONJS = SPACE_NAME + '.notick.commonjs' + EXT_JS;
+    var FILE_NAME_OUT_MAX_NOTICK = DIST + '/' + SPACE_NAME + '.notick' + EXT_JS;
+    var FILE_NAME_OUT_MIN_NOTICK = DIST + '/' + SPACE_NAME + '.notick.min' + EXT_JS;
+    var FILE_NAME_OUT_MAX_NOEXTNOTICK = DIST + '/' + SPACE_NAME + '.noext.notick' + EXT_JS;
+    var FILE_NAME_OUT_MIN_NOEXTNOTICK = DIST + '/' + SPACE_NAME + '.noext.notick.min' + EXT_JS;
+    var FILE_NAME_OUT_MAX_NOEXTNOTICKNOUMD = DIST + '/' + SPACE_NAME + '.noumd.noext.notick' + EXT_JS;
+    var FILE_NAME_OUT_MIN_NOEXTNOTICKNOUMD = DIST + '/' + SPACE_NAME + '.noumd.noext.notick.min' + EXT_JS;
+    var FILE_NAME_OUT_MAX_NOTICK_ES = DIST + '/' + SPACE_NAME + '.notick.es' + EXT_JS;
+    var FILE_NAME_OUT_MAX_NOTICK_COMMONJS = DIST + '/' + SPACE_NAME + '.notick.commonjs' + EXT_JS;
 
     var extend = require('extend');
 
@@ -64,13 +65,13 @@ module.exports = function(grunt) {
 
     var extNoTickOptions = extend({}, requireOptions, {
         paths: {
-            'tick/small': 'tick/directCall'
+            'tick/simple': 'tick/directCall'
         },
         out: FILE_NAME_OUT_MAX_NOTICK
     });
     var noExtNoTickOptions = extend({}, requireOptions, {
         paths:  {
-            'tick/small': 'tick/directCall',
+            'tick/simple': 'tick/directCall',
             'ext/all': 'ext/empty'
         },
         out: FILE_NAME_OUT_MAX_NOEXTNOTICK

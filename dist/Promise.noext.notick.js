@@ -1,48 +1,61 @@
-//>>excludeStart("release");
-if (typeof define !== 'function') {
-    var define = require('amdefine')(module);
-}
-//>>excludeEnd("release");
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD. Register as an anonymous module.
+    define([], function () {
+      return (root.returnExportsGlobal = factory());
+    });
+  } else if (typeof exports === 'object') {
+    // Node. Does not work with strict CommonJS, but
+    // only CommonJS-like enviroments that support module.exports,
+    // like Node.
+    module.exports = factory();
+  } else {
+    root['Promise'] = factory();
+  }
+}(this, function () {
 
-define(['./ext/all', './util', './tick/small'], function(allExt, util, tick){
-    'use strict';
+var util;
 
-    var PROTOTYPE = 'prototype', 
-        RESOLVE = 'resolve',
-        REJECT = 'reject',
-        RESOLVED = 'resolved', 
-        REJECTED = 'rejected', 
-        PENDING = 'pending',
-        PROMISE = 'promise',
-        CALL = 'call',
-        RESULT = 'result',
-        ERROR = 'error',
-        undef;
-    
+util = {
+    f: function (obj) {
+        return typeof obj === 'function';
+    }
+};
+var extAll;
+
+extAll = function (util) {
+    return function () {
+    };
+}(util);
+var tickSimple;
+
+tickSimple = function (func) {
+    func();
+};
+var Promise;
+
+Promise = function (allExt, util, tick) {
+    var PROTOTYPE = 'prototype', RESOLVE = 'resolve', REJECT = 'reject', RESOLVED = 'resolved', REJECTED = 'rejected', PENDING = 'pending', PROMISE = 'promise', CALL = 'call', RESULT = 'result', ERROR = 'error', undef;
     function safeRun(func, value, defer) {
         var ret;
-        try{
+        try {
             ret = func[CALL](undef, value);
-        }
-        catch(ex){
+        } catch (ex) {
             handleError(ex);
             defer[REJECT](ex);
         }
         return ret;
     }
-
     function reset() {
         this[PROMISE]._s = [];
         this[PROMISE]._f = [];
         this[PROMISE]._d = [];
     }
-
     function handleError(err) {
-        if (util.f(Defer.onError)){
+        if (util.f(Defer.onError)) {
             Defer.onError(err);
         }
     }
-
     function resolve(result) {
         var me = this;
         var promise = me[PROMISE];
@@ -50,43 +63,40 @@ define(['./ext/all', './util', './tick/small'], function(allExt, util, tick){
             promise[RESULT] = finalResult;
             promise[RESOLVED] = true;
             promise[PENDING] = false;
-            tick(function(){
+            tick(function () {
                 for (var i = 0; i < promise._s.length; i++) {
                     safeRun(promise._s[i], promise[RESULT], promise._d[i]);
                 }
-
                 reset[CALL](me);
             });
         }
-        function recursiveCall(recursiveResult){
-            promiseAwareCall(recursiveCall, function(error){
+        function recursiveCall(recursiveResult) {
+            promiseAwareCall(recursiveCall, function (error) {
                 promise[PENDING] = false;
                 reject[CALL](me, error);
             }, callback, me, recursiveResult);
         }
-        if (promise[RESOLVED] || promise[REJECTED] || promise[PENDING]){
+        if (promise[RESOLVED] || promise[REJECTED] || promise[PENDING]) {
             return;
         }
         promise[PENDING] = true;
         recursiveCall(result);
     }
-
-    function reject(error){
+    function reject(error) {
         var me = this;
         var promise = me[PROMISE];
         function callback(finalError) {
             promise[ERROR] = finalError;
             promise[REJECTED] = true;
             promise[PENDING] = false;
-            tick(function(){
+            tick(function () {
                 for (var i = 0; i < promise._f.length; i++) {
                     safeRun(promise._f[i], promise[ERROR], promise._d[i]);
                 }
-
                 reset[CALL](me);
             });
         }
-        if (promise[RESOLVED] || promise[REJECTED] || promise[PENDING]){
+        if (promise[RESOLVED] || promise[REJECTED] || promise[PENDING]) {
             return;
         }
         promise[PENDING] = true;
@@ -94,43 +104,39 @@ define(['./ext/all', './util', './tick/small'], function(allExt, util, tick){
     }
     function createResultHandlerWrapper(handler, defer) {
         return function (value) {
-            tick(function(){
+            tick(function () {
                 var res = safeRun(handler, value, defer);
                 promiseAwareCall(defer[RESOLVE], defer[REJECT], defer[RESOLVE], defer, res);
             });
         };
     }
-
     function promiseAwareCall(resolve, reject, defaultSolution, context, result) {
         var then, handled;
-        try{
+        try {
             then = (typeof result === 'object' || util.f(result)) && result && result.then;
-        }
-        catch(ex){
+        } catch (ex) {
             handleError(ex);
             reject[CALL](context, ex);
             return;
         }
         if (result === context[PROMISE]) {
             reject[CALL](context, new TypeError(1));
-        }
-        else if (util.f(then)){
-            try{
-                then[CALL](result, function(newResult){
+        } else if (util.f(then)) {
+            try {
+                then[CALL](result, function (newResult) {
                     if (handled) {
                         return;
                     }
                     handled = true;
                     resolve[CALL](context, newResult);
-                }, function(newError){
+                }, function (newError) {
                     if (handled) {
                         return;
                     }
                     handled = true;
                     reject[CALL](context, newError);
                 });
-            }
-            catch(ex) {
+            } catch (ex) {
                 if (handled) {
                     return;
                 }
@@ -138,31 +144,27 @@ define(['./ext/all', './util', './tick/small'], function(allExt, util, tick){
                 handleError(ex);
                 reject[CALL](context, ex);
             }
-        }
-        else {
+        } else {
             if (result === undef) {
                 defaultSolution[CALL](context);
-            }
-            else {
+            } else {
                 defaultSolution[CALL](context, result);
             }
         }
     }
-
     function Defer(promise) {
         if (!(this instanceof Defer)) {
             return new Defer(promise);
         }
         var me = this;
-        me[PROMISE] = (promise && util.f(promise.then))?promise:new Promise(me);
-        me[RESOLVE] = function(value){
+        me[PROMISE] = promise && util.f(promise.then) ? promise : new Promise(me);
+        me[RESOLVE] = function (value) {
             resolve[CALL](me, value);
         };
-        me[REJECT] = function(value){
+        me[REJECT] = function (value) {
             reject[CALL](me, value);
         };
     }
-
     function Promise(arg) {
         if (!(this instanceof Promise)) {
             return new Promise(arg);
@@ -170,75 +172,67 @@ define(['./ext/all', './util', './tick/small'], function(allExt, util, tick){
         this._s = [];
         this._f = [];
         this._d = [];
-        this._defer = (arg && arg instanceof Defer)?arg:new Defer(this);
+        this._defer = arg && arg instanceof Defer ? arg : new Defer(this);
         this[RESOLVED] = false;
         this[REJECTED] = false;
         this[PENDING] = false;
         this[RESULT] = null;
         this[ERROR] = null;
         if (util.f(arg)) {
-            try{
+            try {
                 arg[CALL](this, this._defer[RESOLVE], this._defer[REJECT]);
-            }
-            catch(ex){
+            } catch (ex) {
                 handleError(ex);
                 this._defer[REJECT](ex);
             }
         }
     }
-
-    Promise[PROTOTYPE].then = function(onSuccess, onFailure) {
+    Promise[PROTOTYPE].then = function (onSuccess, onFailure) {
         var defer = new Defer();
         var me = this;
         var handleSuccess, handleFail;
-
         me._d.push(defer);
-
         if (!me[REJECTED]) {
-            if (util.f(onSuccess)){
+            if (util.f(onSuccess)) {
                 handleSuccess = createResultHandlerWrapper[CALL](me, onSuccess, defer);
-            }
-            else{
+            } else {
                 handleSuccess = defer[RESOLVE];
             }
-
             if (me[RESOLVED]) {
                 handleSuccess[CALL](null, me[RESULT]);
             } else {
                 me._s.push(handleSuccess);
             }
         }
-
         if (!me[RESOLVED]) {
-            if (util.f(onFailure)){
+            if (util.f(onFailure)) {
                 handleFail = createResultHandlerWrapper[CALL](me, onFailure, defer);
-            }
-            else {
+            } else {
                 handleFail = defer[REJECT];
             }
-
             if (me[REJECTED]) {
                 handleFail[CALL](null, me[ERROR]);
             } else {
                 me._f.push(handleFail);
             }
         }
-        
         return defer[PROMISE];
     };
-
-    Defer.Promise = Promise;
-    Promise[RESOLVE] = function(v){
+    Promise.Defer = Defer;
+    Promise[RESOLVE] = function (v) {
         var result = new Defer();
         result[RESOLVE](v);
         return result[PROMISE];
     };
-    Promise[REJECT] = function(v){
+    Promise[REJECT] = function (v) {
         var result = new Defer();
         result[REJECT](v);
         return result[PROMISE];
     };
-    
     allExt(Promise);
-    return Defer;
-});
+    return Promise;
+}(extAll, util, tickSimple);
+
+return Promise;
+
+}));

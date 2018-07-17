@@ -1,19 +1,3 @@
-(function (root, factory) {
-  if (typeof define === 'function' && define.amd) {
-    // AMD. Register as an anonymous module.
-    define([], function () {
-      return (root.returnExportsGlobal = factory());
-    });
-  } else if (typeof exports === 'object') {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like enviroments that support module.exports,
-    // like Node.
-    module.exports = factory();
-  } else {
-    root['Defer'] = factory();
-  }
-}(this, function () {
-
 var util;
 
 util = {
@@ -55,14 +39,14 @@ extAll = function (util) {
         };
     };
 }(util);
-var tickSmall;
+var tickSimple;
 
-tickSmall = function (func) {
+tickSimple = function (func) {
     func();
 };
-var Defer;
+var Promise;
 
-Defer = function (allExt, util, tick) {
+Promise = function (allExt, util, tick) {
     var PROTOTYPE = 'prototype', RESOLVE = 'resolve', REJECT = 'reject', RESOLVED = 'resolved', REJECTED = 'rejected', PENDING = 'pending', PROMISE = 'promise', CALL = 'call', RESULT = 'result', ERROR = 'error', undef;
     function safeRun(func, value, defer) {
         var ret;
@@ -246,7 +230,7 @@ Defer = function (allExt, util, tick) {
         }
         return defer[PROMISE];
     };
-    Defer.Promise = Promise;
+    Promise.Defer = Defer;
     Promise[RESOLVE] = function (v) {
         var result = new Defer();
         result[RESOLVE](v);
@@ -258,9 +242,6 @@ Defer = function (allExt, util, tick) {
         return result[PROMISE];
     };
     allExt(Promise);
-    return Defer;
-}(extAll, util, tickSmall);
-
-return Defer;
-
-}));
+    return Promise;
+}(extAll, util, tickSimple);
+;export default Defer;
