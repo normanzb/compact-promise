@@ -64,8 +64,8 @@ Promise = function (allExt, util, tick) {
         this[PROMISE]._d = [];
     }
     function handleError(err) {
-        if (util.f(Defer.onError)) {
-            Defer.onError(err);
+        if (util.f(Promise.onError)) {
+            Promise.onError(err);
         }
     }
     function resolve(result) {
@@ -244,4 +244,4 @@ Promise = function (allExt, util, tick) {
     allExt(Promise);
     return Promise;
 }(extAll, util, tickSimple);
-;export default Defer;
+;export default Promise;
