@@ -13,14 +13,13 @@ var sinon = require('sinon');
 if (typeof g.define !== 'function') {
     g.define = requirejs.define;
 }
-Defer = requirejs('../src/Defer.js');
-console.log(Defer);
-var defer = Defer;
-var resolve = Defer.resolve;
-var reject = Defer.reject;
+Promise = requirejs('../src/Promise.js');
+console.log(Promise);
+var resolve = Promise.resolve;
+var reject = Promise.reject;
 
 module.exports = {
   resolved: resolve,
   rejected: reject,
-  deferred: defer
+  deferred: Promise.Defer
 };

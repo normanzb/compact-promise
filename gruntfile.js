@@ -84,7 +84,7 @@ module.exports = function(grunt) {
         out: FILE_NAME_OUT_MAX_NOTICK_ES,
         wrap: {
             start: "",
-            end: ";export default Defer;"
+            end: ";export default Promise;"
         },
     });
 
@@ -92,7 +92,7 @@ module.exports = function(grunt) {
         out: FILE_NAME_OUT_MAX_NOTICK_COMMONJS,
         wrap: {
             start: "",
-            end: ";module.exports = Defer;"
+            end: ";module.exports = Promise;"
         },
     })
 

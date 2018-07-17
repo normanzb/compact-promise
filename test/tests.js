@@ -1,7 +1,7 @@
 define([
-    'src/Defer'
+    'src/Promise'
 ], function(
-    Defer
+    Promise
 ) {
     'use strict';
 
@@ -15,7 +15,6 @@ define([
 
 
     return describe('Compact Promise', function(){
-        var Promise = Defer.Promise;
         describe('Promise', function(){
             describe('Promise.all', function(){
                 it('should exist', function() {

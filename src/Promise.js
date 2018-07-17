@@ -38,8 +38,8 @@ define(['./ext/all', './util', './tick/simple'], function(allExt, util, tick){
     }
 
     function handleError(err) {
-        if (util.f(Defer.onError)){
-            Defer.onError(err);
+        if (util.f(Promise.onError)){
+            Promise.onError(err);
         }
     }
 
